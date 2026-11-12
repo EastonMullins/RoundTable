@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your Leadership Pace</title>
+<style>
+:root{--blue:#075b9b;--blue2:#0a6eb8;--ink:#17232d;--muted:#5d6b75;--pale:#eef5fa;--line:#d7e2ea;--gold:#e4b44f}
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6f8;color:var(--ink);font-family:Arial,Helvetica,sans-serif;line-height:1.5}
+main{max-width:850px;margin:0 auto;padding:28px 18px 48px}
+.hero{background:linear-gradient(135deg,#064b80,#0874b7);color:white;padding:30px;border-radius:18px;margin-bottom:20px}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:1.6px;text-transform:uppercase;opacity:.85}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.08;margin:9px 0}
+.hero p{max-width:650px;margin:12px 0 0;color:#e7f3fb}
+.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:24px;margin:16px 0;box-shadow:0 5px 18px rgba(21,49,67,.05)}
+.progress-top{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:13px;font-weight:700}
+.progress{height:8px;background:#e8eef2;border-radius:10px;overflow:hidden;margin:10px 0 22px}
+.bar{height:100%;width:0;background:var(--blue);transition:width .2s}
+.qnum{color:var(--blue);font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:1px}
+h2{font-size:23px;margin:5px 0 8px}
+.question{font-size:19px;font-weight:700;margin:10px 0 20px}
+.scale{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.choice{border:1px solid var(--line);background:#fff;border-radius:12px;padding:12px 7px;text-align:center;cursor:pointer;min-height:76px;color:var(--ink);font:inherit}
+.choice:hover{border-color:var(--blue)}
+.choice.selected{background:#e9f4fc;border:2px solid var(--blue);padding:11px 6px;color:#064b80;font-weight:700}
+.choice strong{display:block;font-size:18px;margin-bottom:3px}
+.choice span{display:block;font-size:11px;line-height:1.25}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
+button.action{border:0;border-radius:10px;padding:12px 20px;font-size:15px;font-weight:700;cursor:pointer}
+.primary{background:var(--blue);color:white}
+.primary:disabled{opacity:.4;cursor:not-allowed}
+.secondary{background:#edf2f5;color:#31424e}
+.small{font-size:13px;color:var(--muted)}
+.hidden{display:none!important}
+.result-title{font-size:30px;color:var(--blue);margin:4px 0}
+.matrix{display:grid;grid-template-columns:38px 1fr 1fr;grid-template-rows:1fr 1fr 34px;gap:8px;margin:20px 0 10px;min-height:310px}
+.axis-y{grid-row:1/3;display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font-weight:700;color:var(--muted);letter-spacing:.5px}
+.cell{background:#075b9b;color:white;padding:15px;border-radius:10px;opacity:.52;display:flex;flex-direction:column;justify-content:center;min-height:140px;border:3px solid transparent}
+.cell.active{opacity:1;border-color:var(--gold);box-shadow:0 0 0 3px rgba(228,180,79,.2)}
+.cell h3{font-size:17px;margin:0 0 7px}
+.cell p{font-size:13px;margin:0}
+.xlabels{grid-column:2/4;display:flex;justify-content:space-between;font-weight:700;color:var(--muted);padding:0 4px}
+.pill{display:inline-block;background:#eaf4fb;color:#075b9b;border-radius:99px;padding:5px 10px;font-size:12px;font-weight:800}
+.resultbox{background:#f4f8fb;border-left:4px solid var(--gold);padding:15px 17px;border-radius:8px;margin:16px 0}
+.resultbox p{margin:6px 0}
+footer{text-align:center;color:#71808a;font-size:12px;margin-top:18px}
+@media(max-width:560px){main{padding:15px 12px 30px}.hero{padding:23px}.panel{padding:17px}.scale{gap:5px}.choice{padding:10px 3px;min-height:72px}.choice span{font-size:10px}.matrix{grid-template-columns:27px 1fr 1fr;gap:5px}.cell{padding:9px;min-height:135px}.cell h3{font-size:14px}.cell p{font-size:11px}}
+</style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="eyebrow">Quick leadership self-check • 8 questions</div>
+    <h1>Find Your Leadership Pace</h1>
+    <p>Are you more like the caffeinated squirrel, tentative tortoise, wise wolf, or educated elephant? Answer honestly to see where you land on the leadership pace matrix.</p>
+  </section>
+
+  <section class="panel" id="intro">
+    <h2>How it works</h2>
+    <p>For each statement, choose how much you agree based on how you <strong>usually</strong> lead, work on a team, or make decisions—not how you wish you behaved.</p>
+    <p class="small">There are no right or wrong answers. This is a quick reflection tool, not a formal personality or leadership assessment.</p>
+    <button class="action primary" id="start">Start the 8-question check-in</button>
+  </section>
+
+  <section class="panel hidden" id="quiz">
+    <div class="progress-top"><span id="stepLabel">QUESTION 1 OF 8</span><span id="answered">0 of 8 answered</span></div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div class="qnum" id="category">Your natural pace</div>
+    <h2 id="qtitle">Question</h2>
+    <div class="question" id="qtext"></div>
+    <div class="scale" id="scale"></div>
+    <div class="nav">
+      <button class="action secondary" id="back">Back</button>
+      <button class="action primary" id="next" disabled>Next</button>
+    </div>
+  </section>
+
+  <section class="panel hidden" id="results">
+    <div class="pill">YOUR LEADERSHIP PACE RESULT</div>
+    <h2 class="result-title" id="archetype"></h2>
+    <p id="summary"></p>
+    <div class="matrix">
+      <div class="axis-y">PACE: FAST ↑ / SLOW ↓</div>
+      <div class="cell" id="fast-no"><h3>The caffeinated squirrel</h3><p>Fast pace • No clear pacer</p></div>
+      <div class="cell" id="fast-yes"><h3>The wise wolf</h3><p>Fast pace • With a pacer</p></div>
+      <div class="cell" id="slow-no"><h3>The tentative tortoise</h3><p>Slow pace • No clear pacer</p></div>
+      <div class="cell" id="slow-yes"><h3>The educated elephant</h3><p>Slow pace • With a pacer</p></div>
+      <div class="xlabels"><span>← No pacer</span><span>With pacer →</span></div>
+    </div>
+    <div class="resultbox">
+      <strong>What this may mean</strong>
+      <p id="meaning"></p>
+      <strong>One thing to try</strong>
+      <p id="tip"></p>
+    </div>
+    <p class="small" id="scores"></p>
+    <div class="nav">
+      <button class="action secondary" id="restart">Retake quiz</button>
+      <button class="action primary" id="print">Print / Save result</button>
+    </div>
+  </section>
+  <footer>Leadership pace reflection activity • Based on the four-quadrant matrix discussed in the lesson</footer>
+</main>
+<script>
+const questions = [
+ {axis:"pace",label:"Your natural pace",q:"I tend to make decisions and move into action quickly, even when I don't have every detail.",kind:"fast"},
+ {axis:"pace",label:"Your natural pace",q:"I often push to move on to the next task or priority before the current one is fully settled.",kind:"fast"},
+ {axis:"pace",label:"Your natural pace",q:"I prefer to gather more information and think through the options before making a decision.",kind:"slow"},
+ {axis:"pace",label:"Your natural pace",q:"I sometimes delay taking action because I want to feel completely confident first.",kind:"slow"},
+ {axis:"pacer",label:"Your support system",q:"I have someone who gives me honest feedback about when I am moving too quickly or too slowly.",kind:"pacer"},
+ {axis:"pacer",label:"Your support system",q:"I regularly ask someone I trust to challenge my thinking, priorities, or timing.",kind:"pacer"},
+ {axis:"pacer",label:"Your support system",q:"When someone points out that my pace is hurting the team or the work, I take it seriously and adjust.",kind:"pacer"},
+ {axis:"pacer",label:"Your support system",q:"I feel comfortable being challenged by this person, and they feel comfortable being honest with me.",kind:"pacer"}
+];
+const labels=["Strongly disagree","Disagree","Not sure","Agree","Strongly agree"];
+let answers=Array(questions.length).fill(null), current=0;
+const $=id=>document.getElementById(id);
+$("start").onclick=()=>{$("intro").classList.add("hidden");$("quiz").classList.remove("hidden");render()};
+function render(){
+ const q=questions[current];
+ $("stepLabel").textContent=`QUESTION ${current+1} OF ${questions.length}`;
+ $("answered").textContent=`${answers.filter(v=>v!==null).length} of ${questions.length} answered`;
+ $("bar").style.width=`${(current/questions.length)*100}%`;
+ $("category").textContent=q.label;
+ $("qtitle").textContent=q.axis==="pace"?"How do you usually operate?":"How much pacing support do you have?";
+ $("qtext").textContent=q.q;
+ $("scale").innerHTML="";
+ labels.forEach((lab,i)=>{
+   const b=document.createElement("button"); b.className="choice"+(answers[current]===i+1?" selected":"");
+   b.innerHTML=`<strong>${i+1}</strong><span>${lab}</span>`;
+   b.onclick=()=>{answers[current]=i+1;render()};
+   $("scale").appendChild(b);
+ });
+ $("back").disabled=current===0;
+ $("back").style.opacity=current===0?".4":"1";
+ $("next").textContent=current===questions.length-1?"See my result":"Next";
+ $("next").disabled=answers[current]===null;
+}
+$("back").onclick=()=>{if(current>0){current--;render()}};
+$("next").onclick=()=>{if(answers[current]===null)return;if(current<questions.length-1){current++;render()}else showResult()};
+function showResult(){
+ const avg=a=>a.reduce((x,y)=>x+y,0)/a.length;
+ const fast=avg([answers[0],answers[1]]);
+ const slow=avg([answers[2],answers[3]]);
+ const paceFast=fast>=slow;
+ const pacer=avg(answers.slice(4))>=3.5;
+ const key=(paceFast?"fast":"slow")+"-"+(pacer?"yes":"no");
+ const names={"fast-no":"The caffeinated squirrel","fast-yes":"The wise wolf","slow-no":"The tentative tortoise","slow-yes":"The educated elephant"};
+ const summaries={
+ "fast-no":"You lean toward action, urgency, and quick movement—but may not have a consistent person helping you check whether that speed is serving the team.",
+ "fast-yes":"You tend to move quickly and you report having someone who can help you decide when to sprint and when to hold your pace.",
+ "slow-no":"You lean toward careful analysis and caution, but may not have someone helping you recognize when it is time to move forward.",
+ "slow-yes":"You value thoroughness and have someone who can help inject urgency when needed, so decisions do not get stuck in analysis."
+ };
+ const meanings={
+ "fast-no":"Your energy can create momentum, but frequent pivots or rushed choices may leave people feeling whiplashed. A trusted outside perspective can help separate productive urgency from unnecessary speed.",
+ "fast-yes":"A good pacing partner can help turn speed into a competitive advantage by protecting focus, precision, and team capacity.",
+ "slow-no":"Your careful approach can improve quality, but too much caution can become analysis paralysis. A pacing partner can help identify when you have enough information to act.",
+ "slow-yes":"Your thoroughness can be a strength when paired with someone who helps decisions arrive on time and keeps the team moving forward."
+ };
+ const tips={
+ "fast-no":"Choose one trusted person and ask them to flag when priorities are changing too often or decisions are being rushed.",
+ "fast-yes":"Keep checking in with your pacer before major pivots: “Is this the moment to sprint, or should we hold steady?”",
+ "slow-no":"Ask someone you trust to help set a decision deadline and identify what information is truly essential.",
+ "slow-yes":"Agree on clear decision deadlines with your pacer, while preserving time for the analysis that genuinely matters."
+ };
+ ["fast-no","fast-yes","slow-no","slow-yes"].forEach(k=>$(k).classList.toggle("active",k===key));
+ $("archetype").textContent=names[key];
+ $("summary").textContent=summaries[key];
+ $("meaning").textContent=meanings[key];
+ $("tip").textContent=tips[key];
+ $("scores").textContent=`Your reflection scores — Fast-pace tendencies: ${fast.toFixed(1)}/5 • Slow-pace tendencies: ${slow.toFixed(1)}/5 • Pacer support: ${avg(answers.slice(4)).toFixed(1)}/5. A tie on pace is classified as fast for this activity; pacer support counts as “with a pacer” at 3.5/5 or higher.`;
+ $("quiz").classList.add("hidden");$("results").classList.remove("hidden");
+}
+$("restart").onclick=()=>{answers=Array(questions.length).fill(null);current=0;$("results").classList.add("hidden");$("quiz").classList.remove("hidden");render()};
+$("print").onclick=()=>window.print();
+</script>
+</body>
+</html>
